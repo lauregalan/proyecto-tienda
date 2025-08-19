@@ -2,6 +2,8 @@ package com.galan.proyectotienda2025;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -31,7 +34,7 @@ public class InventarioControlador implements Initializable {
     @FXML private TableColumn<Producto, String> colTemporada;
     @FXML private TableColumn<Producto, Integer> colStock;
     @FXML private TableColumn<Producto, String> colPromo;
-
+    @FXML private TextField txtBuscar;
     private ObservableList<Producto> productosObservable = FXCollections.observableArrayList(Database.listarProductos());
 
     public void onInicioButtonClick(ActionEvent actionEvent) throws IOException {
@@ -66,6 +69,23 @@ public class InventarioControlador implements Initializable {
         colDesc.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
         tablaProductos.setItems(productosObservable);
+
+        FilteredList<Producto> filtro = new FilteredList<>(productosObservable, p -> true);
+
+        txtBuscar.textProperty().addListener((obs, viejo, nuevo) -> {
+            filtro.setPredicate(producto -> {
+                if (nuevo == null || nuevo.isEmpty()) {
+                    return true;
+                }
+                String lower = nuevo.toLowerCase();
+                return producto.getNombre().toLowerCase().contains(lower)
+                        || producto.getId().toLowerCase().contains(lower);
+            });
+        });
+
+        SortedList<Producto> sorted = new SortedList<>(filtro);
+        sorted.comparatorProperty().bind(tablaProductos.comparatorProperty());
+        tablaProductos.setItems(sorted);
 
     }
 

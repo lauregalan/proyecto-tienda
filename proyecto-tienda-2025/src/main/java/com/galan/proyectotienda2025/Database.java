@@ -222,6 +222,25 @@ public class Database {
         }
     }
 
+    static boolean existeProducto(String idR) throws SQLException {
+        String sql = "SELECT COUNT(id) FROM productos WHERE id = ?";
+        Connection conn = connect();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, idR); // acá seteás el parámetro
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1); // la primera columna (COUNT)
+                    return count > 0; // devuelve true si existe
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     // Leer productos (Select)
     public static List<Producto> listarProductos() {
         String sql = "SELECT * FROM productos";

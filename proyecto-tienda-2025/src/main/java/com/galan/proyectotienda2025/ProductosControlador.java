@@ -41,7 +41,7 @@ public class ProductosControlador implements Initializable {
     @FXML private TableColumn<Producto, String> colTemporada;
     @FXML private TableColumn<Producto, Integer> colStock;
     @FXML private TableColumn<Producto, String> colPromo;
-
+    @FXML private Button btnResetear;
     private ObservableList<Producto> productosObservable = FXCollections.observableArrayList(Database.listarProductos());
 
     public void onInicioButtonClick(ActionEvent actionEvent) throws IOException {
@@ -78,23 +78,65 @@ public class ProductosControlador implements Initializable {
 
 
     public void onAgregarButtonClick(ActionEvent actionEvent) throws IOException {
+        try {
+            // Validar campos vacíos
+            if (txtProductoId.getText().isEmpty() ||
+                    txtProductoNombre.getText().isEmpty() ||
+                    txtPrecioCompra.getText().isEmpty() ||
+                    txtPrecioVenta.getText().isEmpty() ||
+                    comboTemporada.getValue() == null ||
+                    txtMarca.getText().isEmpty() ||
+                    comboPromo.getValue() == null) {
 
-        /* Recibe los valores para la base de datos*/
-        String temporadaValor = comboTemporada.getValue();
-        String marcaValor = txtMarca.getText();
-        String promoValor = comboPromo.getValue();
-        int stockValor = spinnerStock.getValue();
-        double precioCompra = Double.parseDouble(txtPrecioCompra.getText());
-        double precioVenta = Double.parseDouble(txtPrecioVenta.getText());
-        String productoId = txtProductoId.getText();
-        String productoNombre = txtProductoNombre.getText();
-        String productoDesc = txtProductoDesc.getText();
+                mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completá todos los campos.");
+                return;
+            }
 
-        productosModelo.agregarProductoBd(temporadaValor,marcaValor,stockValor,precioCompra,precioVenta,productoId,productoNombre,productoDesc,promoValor);
+            // Validar que no exista ya el producto (ejemplo usando tu DB)
+            if (Database.existeProducto(txtProductoId.getText())) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Producto duplicado", "Ya existe un producto con ese ID.");
+                return;
+            }
 
-        actualizarTabla();
+            // Parseo seguro de precios
+            double precioCompra;
+            double precioVenta;
+            try {
+                precioCompra = Double.parseDouble(txtPrecioCompra.getText());
+                precioVenta = Double.parseDouble(txtPrecioVenta.getText());
+            } catch (NumberFormatException e) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error de formato", "El precio debe ser un número válido.");
+                return;
+            }
 
+            // Si está todo OK, mando a la BD
+            productosModelo.agregarProductoBd(
+                    comboTemporada.getValue(),
+                    txtMarca.getText(),
+                    spinnerStock.getValue(),
+                    precioCompra,
+                    precioVenta,
+                    txtProductoId.getText(),
+                    txtProductoNombre.getText(),
+                    txtProductoDesc.getText(),
+                    comboPromo.getValue()
+            );
+
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Producto agregado correctamente.");
+            actualizarTabla();
+
+        } catch (Exception e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Ocurrió un problema: " + e.getMessage());
+        }
     }
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
 
     public void onBorrarButtonClick(ActionEvent actionEvent) throws IOException {
         Database.eliminarProducto(txtProductoId.getText());
@@ -102,6 +144,19 @@ public class ProductosControlador implements Initializable {
     }
 
     public void onActualizarButtonClick(ActionEvent actionEvent) throws IOException {
+        // Validar campos vacíos
+
+        if (txtProductoId.getText().isEmpty() ||
+                txtProductoNombre.getText().isEmpty() ||
+                txtPrecioCompra.getText().isEmpty() ||
+                txtPrecioVenta.getText().isEmpty() ||
+                comboTemporada.getValue() == null ||
+                txtMarca.getText().isEmpty() ||
+                comboPromo.getValue() == null) {
+
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completá todos los campos.");
+            return;
+        }
 
         Database.actualizarProducto(txtProductoId.getText(), txtProductoNombre.getText(),Double.parseDouble(txtPrecioCompra.getText()),
                 Double.parseDouble(txtPrecioVenta.getText()),comboTemporada.getValue(), comboPromo.getValue(),
@@ -118,6 +173,11 @@ public class ProductosControlador implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Para que aparezca el cartelito cuando paso por arriba el mouse
+
+        btnResetear.setTooltip(new Tooltip("El reseto no borra el contenido de los productos "));
+
+
         comboTemporada.getItems().addAll("Disponible", "No disponible", "En pedido");
 
         //comboMarca.getItems().addAll("Sin marca");
