@@ -11,6 +11,8 @@
 
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane prefHeight="480.0" prefWidth="800.0" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.galan.proyectotienda2025.PantallaControlador">
 
 
@@ -22,13 +24,13 @@
                 <Text text="Distribuciones" styleClass="brand-long"/>
             </HBox>
 
-            <Button text="🏠 Inicio" styleClass="menu-btn" maxWidth="Infinity"/>
-            <Button text="📦 Productos" styleClass="menu-btn" maxWidth="Infinity" onAction="#onProductosButtonClick"/>
-            <Button text="💰 Ventas" styleClass="menu-btn" maxWidth="Infinity" onAction="#onVentaButtonClick"/>
-            <Button text="👥 Clientes" styleClass="menu-btn" maxWidth="Infinity" onAction="#onClienteButtonClick"/>
-            <Button text="📊 Inventario" styleClass="menu-btn" maxWidth="Infinity" onAction="#onInventarioButtonClick"/>
-            <Button text="💳 Cuotas" styleClass="menu-btn" maxWidth="Infinity" onAction="#onCuotasButtonClick"/>
-            <Button text="⚙️ Configuración" styleClass="menu-btn" maxWidth="Infinity"/>
+            <Button text=" Inicio" styleClass="menu-btn" maxWidth="Infinity" onAction="#onInicioButtonClick"/>
+            <Button text=" Productos" styleClass="menu-btn" maxWidth="Infinity" onAction="#onProductosButtonClick"/>
+            <Button text=" Ventas" styleClass="menu-btn" maxWidth="Infinity" onAction="#onVentaButtonClick"/>
+            <Button text=" Clientes" styleClass="menu-btn" maxWidth="Infinity" onAction="#onClienteButtonClick"/>
+            <Button text=" Inventario" styleClass="menu-btn" maxWidth="Infinity" onAction="#onInventarioButtonClick"/>
+            <Button text=" Cuotas" styleClass="menu-btn" maxWidth="Infinity" onAction="#onCuotasButtonClick"/>
+            <Button text=" Configuración" styleClass="menu-btn" maxWidth="Infinity"/>
 
         </VBox>
     </left>
